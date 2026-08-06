@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kelvin Nyoni Cash Point</title>
+
+    <link rel="stylesheet" href="style.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div id="loader">
+
+    <img src="logo.png" class="loader-logo">
+
+    <h2>Kelvin Nyoni Cash Point</h2>
+
+    <p>Loading...</p>
+
+</div>
+<header>
+<nav class="navbar">
+
+<div class="logo">
+
+<img src="logo.png" alt="Logo">
+
+<span>Kelvin Nyoni Cash Point</span>
+
+</div>
+
+<a href="#loanForm" class="btn">
+Omba Mkopo
+</a>
+
+</nav>
+</header>
+
+<section class="hero" id="home">
+<div class="slider">
+
+<div class="slide active"></div>
+
+<div class="slide"></div>
+
+<div class="slide"></div>
+
+</div>
+<div class="overlay">
+
+<img src="logo.png" class="hero-logo">
+
+<h1>Karibu Kelvin Nyoni Cash Point</h1>
+
+<p>
+
+<div class="welcome-box">
+
+<h2 id="greeting">Karibu!</h2>
+
+<p id="liveClock"></p>
+
+</div>
+</p>
+
+<a href="#services" class="btn">
+Angalia Huduma
+</a>
+
+</div>
+
+</section>
+
+<section class="services" id="services">
+
+<h2>Huduma Zetu</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>Malipo ya Ticket</h3>
+<p>
+Tunatoa malipo ya ushindi kwa makato ya asilimia 7 pekee.
+</p>
+</div>
+
+<div class="card">
+<h3>Mikopo</h3>
+<p>
+Mikopo ya siku 7 kwa riba ya asilimia 10.
+</p>
+</div>
+
+<div class="card">
+<h3>Ushauri wa Kiuchumi</h3>
+<p>
+Tunatoa ushauri wa biashara, uwekezaji na matumizi bora ya fedha.
+</p>
+</div>
+
+</div>
+
+</section>
+
+<section id="contact">
+
+<h2>Wasiliana Nasi</h2>
+
+<p>WhatsApp: 0788519625</p>
+
+<p>Email: nyonikelvin916@gmail.com</p>
+
+<a class="whatsapp"
+href="https://wa.me/255788519625">
+Tuma WhatsApp
+</a>
+
+</section>
+<section class="loan-request">
+
+<h2>Omba Mkopo</h2>
+
+<form id="loanForm">
+
+<input type="text" id="fullName" placeholder="Jina Kamili" required>
+
+<input type="tel" id="phone" placeholder="Namba ya Simu" required>
+
+<input type="number" id="amount" placeholder="Kiasi Unachohitaji (TSh)" required>
+
+<textarea id="reason" rows="5" placeholder="Eleza sababu ya kuomba mkopo"></textarea>
+
+<button type="submit">Tuma Ombi</button>
+
+</form>
+
+<div id="loanMessage"></div>
+<section class="loan-status">
+
+<h2>Angalia Hali ya Ombi</h2>
+
+<input
+type="tel"
+id="searchPhone"
+placeholder="Weka namba ya simu">
+
+<button onclick="checkLoanStatus()">
+Angalia Hali
+</button>
+
+<div id="statusResult"></div>
+
+</section>
+</section>
+<section class="calculator">
+
+<h2>Calculator</h2>
+
+<div class="calc-box">
+
+<h3>Makato ya Ticket (7%)</h3>
+
+<input type="number" id="ticketAmount" placeholder="Weka kiasi cha ushindi">
+
+<button onclick="calculateTicket()">Kokotoa</button>
+
+<p id="ticketResult"></p>
+
+</div>
+
+<div class="calc-box">
+
+<h3>Mkopo wa Siku 7 (10%)</h3>
+
+<input type="number" id="loanAmount" placeholder="Weka kiasi cha mkopo">
+
+<button onclick="calculateLoan()">Kokotoa</button>
+
+<p id="loanResult"></p>
+
+</div>
+
+</section>
+<section class="stats">
+
+<h2>Takwimu Zetu</h2>
+
+<div class="stats-container">
+
+<div class="stat">
+<h1 class="counter" data-target="500">0</h1>
+<p>Wateja Waliohudumiwa</p>
+</div>
+
+<div class="stat">
+<h1 class="counter" data-target="1000">0</h1>
+<p>Malipo ya Ticket</p>
+</div>
+
+<div class="stat">
+<h1 class="counter" data-target="300">0</h1>
+<p>Mikopo Iliyotolewa</p>
+</div>
+
+</div>
+
+</section>
+<section class="testimonials">
+
+<h2>Maoni ya Wateja</h2>
+
+<div class="testimonial-container">
+
+<div class="testimonial">
+<p>"Huduma ni za haraka sana, nililipwa ndani ya dakika chache."</p>
+<h4>⭐⭐⭐⭐⭐</h4>
+<span>- Mteja</span>
+</div>
+
+<div class="testimonial">
+<p>"Mikopo yao ni rahisi na masharti yanaeleweka."</p>
+<h4>⭐⭐⭐⭐⭐</h4>
+<span>- Mteja</span>
+</div>
+
+<div class="testimonial">
+<p>"Ushauri wao wa biashara umenisaidia kukuza kipato changu."</p>
+<h4>⭐⭐⭐⭐⭐</h4>
+<span>- Mteja</span>
+</div>
+
+</div>
+
+</section>
+
+<section class="contact-form">
+
+<h2>Tuma Ujumbe</h2>
+
+<form>
+
+<input type="text" placeholder="Jina lako" required>
+
+<input type="email" placeholder="Email yako" required>
+
+<textarea placeholder="Andika ujumbe wako..." rows="5"></textarea>
+
+<button type="submit">Tuma Ujumbe</button>
+
+</form>
+
+</section>
+<a href="https://wa.me/255788519625" class="floating-whatsapp">
+💬
+</a>
+
+
+<section class="admin-login" id="admin">
+
+<h2>Admin Panel</h2>
+
+<div class="login-box">
+
+<input type="email" id="adminUser" placeholder="Email ya Admin">
+
+<input type="password" id="adminPass" placeholder="Password">
+
+<button onclick="adminLogin()">Ingia</button>
+
+<p id="loginStatus"></p>
+
+</div>
+
+
+
+</section>
+
+</div>
+
+</section>
+<footer>
+
+<p>
+© 2026 Kelvin Nyoni Cash Point.
+All Rights Reserved.
+</p>
+
+</footer>
+
+<script type="module" src="script.js"></script>
+<button id="topBtn">⬆</button>
+</body>
+</html>

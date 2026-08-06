@@ -1,0 +1,432 @@
+<!DOCTYPE html>
+<html lang="sw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Admin Dashboard</title>
+
+<link rel="stylesheet" href="style.css">
+
+<style>
+
+.dashboard{
+display:flex;
+min-height:100vh;
+}
+
+.sidebar{
+width:260px;
+background:#111;
+padding:20px;
+}
+
+.sidebar h2{
+color:#d4af37;
+text-align:center;
+margin-bottom:30px;
+}
+
+.sidebar ul{
+list-style:none;
+padding:0;
+}
+
+.sidebar li{
+margin:15px 0;
+}
+
+.sidebar a{
+color:white;
+text-decoration:none;
+font-size:18px;
+}
+
+.main{
+flex:1;
+padding:30px;
+background:#181818;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:20px;
+}
+
+.card{
+background:#222;
+padding:25px;
+border-radius:15px;
+text-align:center;
+}
+
+.card h2{
+color:#d4af37;
+font-size:40px;
+}
+
+table{
+width:100%;
+margin-top:30px;
+border-collapse:collapse;
+}
+
+table th,
+table td{
+padding:15px;
+border:1px solid #444;
+text-align:center;
+}
+
+table th{
+background:#d4af37;
+color:black;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="dashboard">
+
+<div class="sidebar">
+
+<h2>Kelvin Nyoni</h2>
+
+<ul>
+
+<li><a href="#">🏠 Dashboard</a></li>
+
+<li><a href="#">💰 Mikopo</a></li>
+
+<li><a href="#">🎫 Ticket</a></li>
+
+<li><a href="#">👥 Wateja</a></li>
+
+<li><a href="#">⚙ Settings</a></li>
+<li><a href="#" onclick="logout()">🚪 Logout</a></li>
+</ul>
+
+</div>
+
+<div class="main">
+
+<h1>Dashboard</h1>
+
+
+<div class="cards">
+
+<div class="card">
+<h2 id="customers">0</h2>
+<p>👥 Wateja</p>
+</div>
+
+<div class="card">
+<h2 id="pending">0</h2>
+<p>🟡 Pending</p>
+</div>
+
+<div class="card">
+<h2 id="approved">0</h2>
+<p>🟢 Approved</p>
+</div>
+
+<div class="card">
+<h2 id="rejected">0</h2>
+<p>🔴 Rejected</p>
+</div>
+
+<div class="card">
+<h2 id="totalLoans">TSh 0</h2>
+<p>💰 Jumla ya Mikopo</p>
+</div>
+
+</div>
+<div class="card" style="margin-top:20px;">
+
+<h2>📊 Loan Statistics</h2>
+
+<canvas id="loanChart"></canvas>
+
+</div>
+<h2 style="margin-top:40px;">Maombi ya Hivi Karibuni</h2>
+<input
+    type="text"
+    id="searchInput"
+    placeholder="🔍 Tafuta kwa jina au namba..."
+    onkeyup="searchLoans()">
+<table>
+
+<tr>
+<th>Jina</th>
+<th>Simu</th>
+<th>Kiasi</th>
+<th>Sababu</th>
+<th>Hali</th>
+<th>Kitendo</th>
+</tr>
+
+<tbody id="loanTable">
+
+</tbody>
+
+</table>
+
+</div>
+
+</div>
+
+</body>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script type="module">
+
+import { db, auth } from "./firebase.js";
+
+import {
+collection,
+getDocs,
+doc,
+updateDoc,
+deleteDoc,
+onSnapshot
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
+
+import {
+onAuthStateChanged,
+signOut
+} from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
+
+
+const table = document.getElementById("loanTable");
+
+
+function loadLoans(){
+
+onSnapshot(collection(db,"loans"), (querySnapshot)=>{
+
+table.innerHTML = "";
+
+let customers = 0;
+let pending = 0;
+let approved = 0;
+let rejected = 0;
+let total = 0;
+
+querySnapshot.forEach((doc)=>{
+
+let loan = doc.data();
+
+customers++;
+total += Number(loan.amount);
+
+if(loan.status === "Pending") pending++;
+if(loan.status === "Approved") approved++;
+if(loan.status === "Rejected") rejected++;
+
+let row = `
+
+<tr>
+<td>${loan.name}</td>
+<td>${loan.phone}</td>
+<td>TSh ${Number(loan.amount).toLocaleString()}</td>
+<td>${loan.reason}</td>
+<td>${loan.status}</td>
+<td>
+
+<button onclick="approveLoan('${doc.id}','${loan.phone}','${loan.name}')">
+✅ Kubali
+</button>
+
+<button onclick="rejectLoan('${doc.id}','${loan.phone}','${loan.name}')">
+❌ Kataa
+</button>
+
+<button onclick="sendWhatsApp('${loan.phone}','${loan.name}','${loan.status}')">
+💬 WhatsApp
+</button>
+
+<button onclick="deleteLoan('${doc.id}')">
+🗑️ Futa
+</button>
+</td>
+</tr>
+
+`;
+
+table.innerHTML += row;
+
+});
+
+document.getElementById("customers").innerHTML = customers;
+document.getElementById("pending").innerHTML = pending;
+document.getElementById("approved").innerHTML = approved;
+document.getElementById("rejected").innerHTML = rejected;
+document.getElementById("totalLoans").innerHTML =
+"TSh " + total.toLocaleString();
+const ctx = document.getElementById("loanChart");
+
+if(chart){
+    chart.destroy();
+}
+
+chart = new Chart(ctx, {
+    type: "bar",
+    data: {
+        labels: ["Pending", "Approved", "Rejected"],
+        datasets: [{
+            label: "Loan Requests",
+            data: [pending, approved, rejected]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: true
+            }
+        }
+    }
+});
+});
+
+}
+
+let chart;
+onAuthStateChanged(auth, (user) => {
+
+    if (!user) {
+        window.location.href = "index.html";
+    }
+
+});
+loadLoans();
+function loadStats(){
+
+onSnapshot(collection(db,"loans"),(snapshot)=>{
+
+let total = snapshot.size;
+
+let approved = 0;
+
+let pending = 0;
+
+
+snapshot.forEach((item)=>{
+
+let data = item.data();
+
+
+if(data.status === "Approved"){
+
+approved++;
+
+}
+
+
+if(data.status === "Pending"){
+
+pending++;
+
+}
+
+
+});
+
+
+document.getElementById("totalCustomers").innerHTML = total;
+
+document.getElementById("totalLoans").innerHTML = total;
+
+document.getElementById("approvedLoans").innerHTML = approved;
+
+document.getElementById("pendingLoans").innerHTML = pending;
+
+
+});
+
+}
+
+
+loadStats();
+window.approveLoan = async function(id, phone, name){
+
+await updateDoc(doc(db,"loans",id),{
+status:"Approved"
+});
+
+sendWhatsApp(phone, name, "Approved");
+
+}
+
+
+window.rejectLoan = async function(id, phone, name){
+
+await updateDoc(doc(db,"loans",id),{
+status:"Rejected"
+});
+
+sendWhatsApp(phone, name, "Rejected");
+
+}
+
+
+window.deleteLoan = async function(id){
+
+if(confirm("Una uhakika unataka kufuta ombi hili?")){
+
+await deleteDoc(doc(db,"loans",id));
+
+location.reload();
+
+}
+
+}
+window.sendWhatsApp = function(phone, name, status){
+
+    phone = phone.trim();
+
+    if(phone.startsWith("0")){
+        phone = "255" + phone.substring(1);
+    }
+
+    const message =
+`Habari ${name},
+
+Kutoka Kelvin Nyoni Cash Point.
+
+Ombi lako la mkopo lina hali ifuatayo:
+
+${status}
+
+Asante kwa kutumia huduma zetu.`;
+
+    window.open(
+        "https://wa.me/" + phone + "?text=" + encodeURIComponent(message),
+        "_blank"
+    );
+
+}
+window.logout = async function(){
+
+    try{
+
+        await signOut(auth);
+
+        window.location.href = "index.html";
+
+    }catch(error){
+
+        console.log(error);
+
+        alert("Logout imeshindikana.");
+
+    }
+
+}
+</script>
+
+</body>
+</html>
