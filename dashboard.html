@@ -305,30 +305,7 @@ onAuthStateChanged(auth, (user) => {
 
 loadLoans();
 
-window.searchLoans = function(){
 
-    const input = document
-        .getElementById("searchInput")
-        .value
-        .toLowerCase()
-        .trim();
-
-    const rows = document
-        .querySelectorAll("#loanTable tr");
-
-    rows.forEach(row => {
-
-        const text = row.innerText.toLowerCase();
-
-        if(text.includes(input)){
-            row.style.display = "";
-        }else{
-            row.style.display = "none";
-        }
-
-    });
-
-};
 loadStats();
 window.approveLoan = async function(id, phone, name){
 
@@ -403,6 +380,31 @@ window.logout = async function(){
         alert("Logout imeshindikana.");
 
     }
+
+};
+
+window.searchLoans = function(){
+
+    const input = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
+
+    const rows = document
+        .querySelectorAll("#loanTable tr");
+
+    rows.forEach(row => {
+
+        const text = row.innerText.toLowerCase();
+
+        if(text.includes(input)){
+            row.style.display = "";
+        }else{
+            row.style.display = "none";
+        }
+
+    });
 
 };
 </script>
