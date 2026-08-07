@@ -107,7 +107,7 @@ color:black;
 <li><a href="#">👥 Wateja</a></li>
 
 <li><a href="#">⚙ Settings</a></li>
-<li><a href="#" id="logoutBtn" onclick="alert('Logout button imebonyezwa')">🚪 Logout</a></li>
+<li><a href="#" id="logoutBtn">🚪 Logout</a></li>
 </ul>
 
 </div>
@@ -369,19 +369,23 @@ const logoutBtn = document.getElementById("logoutBtn");
 
 if (logoutBtn) {
 
-    logoutBtn.addEventListener("click", async function(e) {
+    logoutBtn.addEventListener("click", async (e) => {
 
         e.preventDefault();
+
+        console.log("Logout button clicked");
 
         try {
 
             await signOut(auth);
 
+            console.log("Logout successful");
+
             window.location.href = "index.html";
 
         } catch (error) {
 
-            console.log(error);
+            console.error("Logout error:", error);
 
             alert("Logout imeshindikana: " + error.message);
 
