@@ -306,7 +306,6 @@ onAuthStateChanged(auth, (user) => {
 loadLoans();
 
 
-loadStats();
 window.approveLoan = async function(id, phone, name){
 
 await updateDoc(doc(db,"loans",id),{
