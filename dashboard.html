@@ -302,54 +302,33 @@ onAuthStateChanged(auth, (user) => {
     }
 
 });
+
 loadLoans();
-function loadStats(){
 
-onSnapshot(collection(db,"loans"),(snapshot)=>{
+window.searchLoans = function(){
 
-let total = snapshot.size;
+    const input = document
+        .getElementById("searchInput")
+        .value
+        .toLowerCase()
+        .trim();
 
-let approved = 0;
+    const rows = document
+        .querySelectorAll("#loanTable tr");
 
-let pending = 0;
+    rows.forEach(row => {
 
+        const text = row.innerText.toLowerCase();
 
-snapshot.forEach((item)=>{
+        if(text.includes(input)){
+            row.style.display = "";
+        }else{
+            row.style.display = "none";
+        }
 
-let data = item.data();
+    });
 
-
-if(data.status === "Approved"){
-
-approved++;
-
-}
-
-
-if(data.status === "Pending"){
-
-pending++;
-
-}
-
-
-});
-
-
-document.getElementById("totalCustomers").innerHTML = total;
-
-document.getElementById("totalLoans").innerHTML = total;
-
-document.getElementById("approvedLoans").innerHTML = approved;
-
-document.getElementById("pendingLoans").innerHTML = pending;
-
-
-});
-
-}
-
-
+};
 loadStats();
 window.approveLoan = async function(id, phone, name){
 
