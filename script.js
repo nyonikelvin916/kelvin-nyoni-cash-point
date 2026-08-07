@@ -395,16 +395,70 @@ window.checkLoanStatus = async function () {
 
       const loan = doc.data();
 
+      let statusText = loan.status;
+      let statusColor = "#d4af37";
+      let statusIcon = "🟡";
+
+      if (loan.status === "Approved") {
+        statusText = "Imekubaliwa";
+        statusColor = "#22c55e";
+        statusIcon = "🟢";
+      }
+
+      else if (loan.status === "Rejected") {
+        statusText = "Imekataliwa";
+        statusColor = "#ef4444";
+        statusIcon = "🔴";
+      }
+
+      else if (loan.status === "Pending") {
+        statusText = "Inasubiri";
+        statusColor = "#f59e0b";
+        statusIcon = "🟡";
+      }
+
       result.innerHTML = `
-        <h3>Jina: ${loan.name}</h3>
-        <p>Kiasi: TSh ${Number(loan.amount).toLocaleString()}</p>
-        <p>Hali: <strong>${loan.status}</strong></p>
+        <div style="
+          margin-top:20px;
+          padding:20px;
+          border-radius:18px;
+          background:#151515;
+          box-shadow:0 5px 20px rgba(212,175,55,.15);
+        ">
+
+          <h3 style="margin-bottom:10px;">
+            Jina: ${loan.name}
+          </h3>
+
+          <p>
+            Kiasi: TSh ${Number(loan.amount).toLocaleString()}
+          </p>
+
+          <p style="
+            margin-top:15px;
+            font-size:18px;
+          ">
+            Hali:
+            <strong style="
+              color:${statusColor};
+              font-size:20px;
+            ">
+              ${statusIcon} ${statusText}
+            </strong>
+          </p>
+
+        </div>
       `;
+
     });
 
   } catch (error) {
+
     console.log(error);
-    result.innerHTML = "❌ " + error.message;
-}
+
+    result.innerHTML =
+      "❌ Tatizo limetokea: " + error.message;
+
+  }
 
 };
