@@ -404,7 +404,7 @@ window.checkLoanStatus = async function () {
 
   } catch (error) {
     console.log(error);
-    result.innerHTML = "❌ Tatizo limetokea.";
-  }
+    result.innerHTML = "❌ " + error.message;
+}
 
 };
