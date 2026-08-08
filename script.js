@@ -228,19 +228,25 @@ loanForm.addEventListener("submit",async function(e){
 
 e.preventDefault();
 
-const loanData={
+const reference =
+"KN-" +
+Date.now().toString(36).toUpperCase();
 
-name:document.getElementById("fullName").value,
+const loanData = {
 
-phone:document.getElementById("phone").value,
+  reference: reference,
 
-amount:document.getElementById("amount").value,
+  name: document.getElementById("fullName").value,
 
-reason:document.getElementById("reason").value,
+  phone: document.getElementById("phone").value,
 
-status:"Pending",
+  amount: document.getElementById("amount").value,
 
-date:new Date()
+  reason: document.getElementById("reason").value,
+
+  status: "Pending",
+
+  date: new Date()
 
 };
 
@@ -248,8 +254,19 @@ try{
 
 await addDoc(collection(db,"loans"),loanData);
 
-document.getElementById("loanMessage").innerHTML=
-"Asante <b>"+loanData.name+"</b>, ombi lako limetumwa kikamilifu.";
+document.getElementById("loanMessage").innerHTML = `
+  Asante <b>${loanData.name}</b>, ombi lako limetumwa kikamilifu.<br><br>
+
+  🔐 <strong>Namba yako ya kumbukumbu:</strong><br>
+
+  <span style="font-size:22px;color:#d4af37;">
+    ${loanData.reference}
+  </span>
+
+  <br><br>
+
+  Tafadhali ihifadhi namba hii ili kufuatilia hali ya ombi lako.
+`;
 
 loanForm.reset();
 
