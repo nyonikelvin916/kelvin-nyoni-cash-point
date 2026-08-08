@@ -5,11 +5,13 @@ import {
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-auth.js";
 
 import {
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where
+collection,
+addDoc,
+getDocs,
+query,
+where,
+doc,
+getDoc
 } from "https://www.gstatic.com/firebasejs/12.1.0/firebase-firestore.js";
 
 /* ===========================
@@ -253,7 +255,12 @@ const loanData = {
 try{
 
 await addDoc(collection(db,"loans"),loanData);
-
+await setDoc(doc(db, "public_status", reference), {
+  reference: reference,
+  name: loanData.name,
+  amount: loanData.amount,
+  status: "Pending"
+});
 document.getElementById("loanMessage").innerHTML = `
   Asante <b>${loanData.name}</b>, ombi lako limetumwa kikamilifu.<br><br>
 
@@ -397,78 +404,70 @@ window.checkLoanStatus = async function () {
 
   try {
 
-    const q = query(
-      collection(db, "loans"),
-      where("reference", "==", reference)
-    );
+    const statusRef = doc(db, "public_status", reference);
+    const snapshot = await getDoc(statusRef);
 
-    const snapshot = await getDocs(q);
-
-    if (snapshot.empty) {
+    if (!snapshot.exists()) {
       result.innerHTML = "❌ Hakuna ombi lililopatikana.";
       return;
     }
 
-    snapshot.forEach((doc) => {
+    const loan = snapshot.data();
 
-      const loan = doc.data();
+    let statusText = loan.status;
+    let statusColor = "#d4af37";
+    let statusIcon = "🟡";
 
-      let statusText = loan.status;
-      let statusColor = "#d4af37";
-      let statusIcon = "🟡";
+    if (loan.status === "Approved") {
+      statusText = "Imekubaliwa";
+      statusColor = "#22c55e";
+      statusIcon = "🟢";
+    }
 
-      if (loan.status === "Approved") {
-        statusText = "Imekubaliwa";
-        statusColor = "#22c55e";
-        statusIcon = "🟢";
-      }
+    else if (loan.status === "Rejected") {
+      statusText = "Imekataliwa";
+      statusColor = "#ef4444";
+      statusIcon = "🔴";
+    }
 
-      else if (loan.status === "Rejected") {
-        statusText = "Imekataliwa";
-        statusColor = "#ef4444";
-        statusIcon = "🔴";
-      }
+    else if (loan.status === "Pending") {
+      statusText = "Inasubiri";
+      statusColor = "#f59e0b";
+      statusIcon = "🟡";
+    }
 
-      else if (loan.status === "Pending") {
-        statusText = "Inasubiri";
-        statusColor = "#f59e0b";
-        statusIcon = "🟡";
-      }
+    result.innerHTML = `
+      <div style="
+        margin-top:20px;
+        padding:20px;
+        border-radius:18px;
+        background:#151515;
+        box-shadow:0 5px 20px rgba(212,175,55,.15);
+      ">
 
-      result.innerHTML = `
-        <div style="
-          margin-top:20px;
-          padding:20px;
-          border-radius:18px;
-          background:#151515;
-          box-shadow:0 5px 20px rgba(212,175,55,.15);
+        <h3 style="margin-bottom:10px;">
+          Jina: ${loan.name}
+        </h3>
+
+        <p>
+          Kiasi: TSh ${Number(loan.amount).toLocaleString()}
+        </p>
+
+        <p style="
+          margin-top:15px;
+          font-size:18px;
         ">
-
-          <h3 style="margin-bottom:10px;">
-            Jina: ${loan.name}
-          </h3>
-
-          <p>
-            Kiasi: TSh ${Number(loan.amount).toLocaleString()}
-          </p>
-
-          <p style="
-            margin-top:15px;
-            font-size:18px;
+          Hali:
+          <strong style="
+            color:${statusColor};
+            font-size:20px;
           ">
-            Hali:
-            <strong style="
-              color:${statusColor};
-              font-size:20px;
-            ">
-              ${statusIcon} ${statusText}
-            </strong>
-          </p>
+            ${statusIcon} ${statusText}
+          </strong>
+        </p>
 
-        </div>
-      `;
-
-    });
+      </div>
+    `;
 
   } catch (error) {
 
