@@ -255,8 +255,8 @@ const loanData = {
 try{
 
 await addDoc(collection(db,"loans"),loanData);
-await setDoc(doc(db, "public_status", reference), {
-  reference: reference,
+await setDoc(doc(db, "public_status", loanData.reference), {
+  reference: loanData.reference,
   name: loanData.name,
   amount: loanData.amount,
   status: "Pending"
