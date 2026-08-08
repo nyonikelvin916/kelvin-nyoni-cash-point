@@ -384,13 +384,14 @@ greeting.innerHTML = "🌙 Habari za Jioni";
 setInterval(updateClock,1000);
 
 updateClock();
+
 window.checkLoanStatus = async function () {
 
   const reference = document.getElementById("searchPhone").value.trim();
   const result = document.getElementById("statusResult");
 
-  if (phone === "") {
-    result.innerHTML = "⚠️ Weka namba ya simu kwanza.";
+  if (reference === "") {
+    result.innerHTML = "⚠️ Weka namba ya kumbukumbu kwanza.";
     return;
   }
 
