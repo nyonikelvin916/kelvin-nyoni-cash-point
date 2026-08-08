@@ -386,7 +386,7 @@ setInterval(updateClock,1000);
 updateClock();
 window.checkLoanStatus = async function () {
 
-  const phone = document.getElementById("searchPhone").value.trim();
+  const reference = document.getElementById("searchPhone").value.trim();
   const result = document.getElementById("statusResult");
 
   if (phone === "") {
@@ -398,7 +398,7 @@ window.checkLoanStatus = async function () {
 
     const q = query(
       collection(db, "loans"),
-      where("phone", "==", phone)
+      where("reference", "==", reference)
     );
 
     const snapshot = await getDocs(q);
